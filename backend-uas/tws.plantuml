@@ -1,0 +1,29 @@
+@startuml tws
+entity product{
+    *id : INT (PK)
+    --
+    name_product : (VARCHAR)
+    code_product : (VARCHAR)
+    image : (VARCHAR)
+    id_category : (FK)
+    id_detail : (FK)
+}
+
+
+entity category{
+    *id : INT (PK)
+    --
+    name_categoty : (VARCHAR)
+}
+
+
+entity detail{
+    *id : INT (PK)
+    --
+    short_description : (TEXT)
+    long_description : (LONGTEXT)
+}
+
+product }|--|{ category
+product }|--|| detail
+@enduml
