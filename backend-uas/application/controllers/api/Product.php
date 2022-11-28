@@ -66,46 +66,44 @@ class Product extends RestController
         }
     }
 
-    public function updateProduct_post($where)
-    {
+    public function updateProduct_put($where){
         $product = new ModelProduct;
-
-        $config['upload_path'] = './assets/img/upload/';
-        $config['allowed_types'] = 'jpg|png|jpeg';
-        $config['max_size'] = '3000';
-        $config['max_width'] = '1024';
-        $config['max_height'] = '1000';
-        $config['file_name'] = 'img' . time();
-        $this->load->library('upload', $config);
-        if ($this->upload->do_upload('image')) {
-            $image = $this->upload->data();
-            $gambar = $image['file_name'];
-        } else {
-            $gambar = 'default.jpg';
-        }
-        $this->load->helper(array('form', 'url'));
-        $this->load->library('form_validation');
-
-        $data = [
-            'name_product' => $this->input->post('name_product', true),
-            'code_product' => $this->input->post('code_product', true),
-            'image' => $gambar,
-            'id_category' => $this->input->post('id_category', true),
-            'id_detail' => $this->input->post('id_detail', true),
-        ];
-
         $validasi = $product->getProductSpesific($where);
+        $img_source = $this->put('image', true);
         if ($validasi != False) {
-            $id = ['id' => $where];
-            $insert = $product->updateProduct($data, $id);
-            if ($insert != False) {
-                $this->response(['status' => $insert], 200);
+            if(!empty($img_source)){
+                $decode = base64_decode($img_source);
+                try {
+                    $im = imageCreateFromString($decode);
+                    if(!$im) {
+                        throw new Exception("Value is not a valid image");
+                    }
+                    $file_name = 'img'. time();
+                    $img_file = './assets/img/'.$file_name.'.png';
+                    imagepng($im, $img_file, 0);
+                    $data = [
+                        'name_product' => $this->put('name_product', true),
+                        'code_product' => $this->put('code_product', true), 
+                        'image' => $img_file,
+                        'id_category' => $this->put('id_category', true),
+                        'id_detail' => $this->put('id_detail', true),
+                    ];
+                    $id = ['id' => $where];
+                    $insert = $product->updateProduct($data, $id);
+                    if ($insert != False) {
+                        $this->response(['status' => True], 200);
+                    } else {
+                        $this->response($where, 502);
+                    }
+                } catch(Exception $e){
+                    $this->response(['message'=>$e->getMessage()], 400);
+                }
             } else {
-                $this->response($where, 502);
+            $this->response(array('message'=>'Image Cannot Empty'), 400);
             }
         } else {
-            $this->response(array('status'=>'Update Failed, Data not Found'), 404);
-        }
+            $this->response(array('message'=>'Update Failed, Data not Found'), 404);
+            }   
     }
 
     public function productSpesific_get($where)

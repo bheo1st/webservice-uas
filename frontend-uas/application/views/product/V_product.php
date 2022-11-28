@@ -31,7 +31,7 @@
                                     foreach ($data['product'] as $p) {
                                     ?>
                                         <td> <?= $no++; ?> </td>
-                                        <td><img src="<?php echo 'http://backend-uas.bhe/assets/img/upload/' . $p->image ?>" height="20px"></td>
+                                        <td><img src="<?php echo 'http://localhost/backend-uas/' . $p->image ?>" height="20px"></td>
                                         <td> <?php echo $p->name_product ?> </td>
                                         <td> <?php echo $p->code_product; ?> </td>
                                         <td> <?php echo $p->name_category; ?> </td>
@@ -104,11 +104,12 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputPassword1">Product Code</label>
-                                        <input type="text" name="code_product" id="product_code" class="form-control" placeholder="Product Code">
+                                        <input type="number" name="code_product" id="product_code" class="form-control" placeholder="Product Code">
                                     </div>
                                     <div class="mb-3">
+                                        <input type="hidden" id="base64input" name="base64input">
                                         <label for="exampleFormControlInput1" class="form-label">Upload Image</label>
-                                        <input class="" type="file" name="image" class="form-control" />
+                                        <input class="" type="file" id="image_g" onchange="base64(this)" name="image" class="form-control" />
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleFormControlSelect1">Category</label>
@@ -215,7 +216,7 @@
             $('.info').on('click', function() {
                 const product = $(this).data('product')
                 $('.product_title').text(product.name_product)
-                $('#product_img').prop('src', `${BASE_URL_API}/assets/img/upload/${product.image}`)
+                $('#product_img').prop('src', `${BASE_URL_API}/${product.image}`)
                 $('.product_long').text(product.long_description)
                 console.log(product.name_product)
             })
@@ -241,19 +242,30 @@
                 $('#product_id').val(product.product_id);
                 $("#product_name").val(product.name_product)
                 $("#product_code").val(product.code_product)
+                $("#image_g").val(product.image)
                 $("#product_category").val(product.id)
                 $("#product_detail ").val(product.detail_id)
             })
             $('#edit').on('submit', function(e) {
-                const id = $('#product_id').val();
                 e.preventDefault()
+                const id = $('#product_id').val();
+                const test = $("#image_g")[0].files[0]
+                console.log(test);
+                var dataP = {
+                    name_product: $("#product_name").val(),
+                    code_product: $("#product_code").val(),
+                    image: $("#base64input").val(),
+                    id_category: $("#product_category").val(),
+                    id_detail: $("#product_detail").val(),
+                }
+                console.log(dataP);
                 $.ajax({
                     url: `${BASE_URL_API}api/product/update/${id}`,
-                    type: "POST",
+                    type: "PUT",
                     dataType: "JSON",
-                    data: new FormData(this),
+                    contentType: 'application/json',
                     processData: false,
-                    contentType: false,
+                    data: JSON.stringify(dataP),
                     beforeSend: () => {
 
                     }
@@ -293,4 +305,14 @@
 
 
         })
+
+        function base64(element) {
+            var file = element.files[0];
+            var reader = new FileReader();
+            reader.onloadend = function() {
+                var res = reader.result.replace('data:image/jpeg;base64,', '')
+                $("#base64input").val(res)
+            }
+            reader.readAsDataURL(file);
+        }
     </script>
