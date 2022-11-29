@@ -162,7 +162,7 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="exampleInputPassword1">Product Code</label> <label style="font-size: 12px; color: red;"> *required</label>
-                                        <input type="text" name="code_product" class="form-control" placeholder="Product Code">
+                                        <input type="number" name="code_product" class="form-control" placeholder="Product Code">
                                     </div>
                                     <div class="mb-3">
                                         <label for="exampleFormControlInput1" class="form-label">Upload Image</label>
@@ -309,6 +309,8 @@
             var reader = new FileReader();
             reader.onloadend = function() {
                 var res = reader.result.replace('data:image/jpeg;base64,', '')
+                var res = reader.result.replace('data:image/png;base64,', '')
+                var res = reader.result.replace('data:image/jpg;base64,', '')
                 $("#base64input").val(res)
             }
             reader.readAsDataURL(file);
