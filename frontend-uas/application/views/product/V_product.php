@@ -308,9 +308,7 @@
             var file = element.files[0];
             var reader = new FileReader();
             reader.onloadend = function() {
-                var res = reader.result.replace('data:image/jpeg;base64,', '')
-                var res = reader.result.replace('data:image/png;base64,', '')
-                var res = reader.result.replace('data:image/jpg;base64,', '')
+				var res = reader.result.replace(/^data:image\/\w+;base64,/, "");
                 $("#base64input").val(res)
             }
             reader.readAsDataURL(file);
