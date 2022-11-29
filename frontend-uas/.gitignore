@@ -1,0 +1,5 @@
+.env.development
+.htaccess
+vendor
+/files/*
+cron_log.log
