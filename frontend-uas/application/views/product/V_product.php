@@ -68,10 +68,10 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-6">
-                            <img src="" id="product_img" alt="" width="225px">
+                            <img src="" id="product_img" alt="" width="400px" height="350px">
                         </div>
                         <div class="col-6">
-                            <p class="product_long"></p>
+                            <p class="product_long ml-4"></p>
                         </div>
                     </div>
                 </div>
